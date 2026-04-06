@@ -2,6 +2,16 @@ programa {
 
   inclua biblioteca Util --> u
 
+  // declaração das variáveis globais
+  cadeia bancos[5][5]  // o "banco de dados" de bancos de sangue. Estou determinando que serão 5 vetores, cada um com 5 posições
+  cadeia doadores[5][2]
+  inteiro proximoBanco = 1
+  inteiro proximoDoador = 1
+  inteiro codigoMenuPrincipal
+  inteiro codigoMenuInterno
+  logico impedido = falso, respondeuQuestionario = falso  
+  cadeia dummy // variável 'dummy', só para que o leia() provoque a parada do programa
+
   funcao letreiroPrograma() {    
     escreva("##################################################\n")
     escreva("########          CONNECT BLOOD           ########\n")
@@ -20,21 +30,23 @@ programa {
 
   funcao menuDoador() {
     letreiroPrograma()
-    escreva("\n       ######### OPÇÕES DE DOADOR #########\n")
-    escreva("       ####  1 - AGENDAMENTO           ####\n")
-    escreva("       ####  2 - ATUALIZAR CADASTRO    ####\n")
-    escreva("       ####  3 - VOLTAR                ####\n")
-    escreva("       ####################################\n")
+    escreva("\n      ######### OPÇÕES DE DOADOR #############\n")
+    escreva("      ####  1 - QUESTIONÁRIO PRÉ-TRIAGEM  ####\n")
+    escreva("      ####  2 - AGENDAMENTO               ####\n")
+    escreva("      ####  3 - ATUALIZAR CADASTRO        ####\n")
+    escreva("      ####  4 - LISTAR BANCOS DE SANGUE   ####\n")
+    escreva("      ####  5 - VOLTAR                    ####\n")
+    escreva("      ########################################\n")
     }
  
    funcao menuAdmin() {
-    letreiroPrograma() 
-    escreva("\n        ###### OPÇÕES ADMINISTRADOR ######\n")
-    escreva("        ####  1 - CADASTRAR BANCO     ####\n")
-    escreva("        ####  2 - LISTAR BANCOS       ####\n")
-    escreva("        ####  3 - LISTAR DOADORES     ####\n")
-    escreva("        ####  4 - VOLTAR              ####\n")
-    escreva("        ##################################\n")
+    letreiroPrograma()
+    escreva("\n      ###### OPÇÕES ADMINISTRADOR ######\n")
+    escreva("      ####  1 - CADASTRAR BANCO     ####\n")
+    escreva("      ####  2 - LISTAR BANCOS       ####\n")
+    escreva("      ####  3 - LISTAR DOADORES     ####\n")
+    escreva("      ####  4 - VOLTAR              ####\n")
+    escreva("      ##################################\n")
   }
 
   funcao alerta(){
@@ -46,14 +58,15 @@ programa {
     escreva("\n ####################################################################\n")
   }
 
-  funcao menuAgendamento() {
-    letreiroPrograma()
-    escreva("\n  ########## OPÇÕES DE AGENDAMENTO ###########\n")
-    escreva("  ####  1 - SELECIONE UM BANCO DE SANGUE  ####\n")
-    escreva("  ####  2 - DICAS PARA O DIA DA DOAÇÃO    ####\n")
-    escreva("  ####  3 - VOLTAR                        ####\n")
-    escreva("  ############################################\n")
-  }
+  // esta função será utilizada numa próxima versão
+  //funcao menuAgendamento() {
+  //  letreiroPrograma()
+  //  escreva("\n  ########## OPÇÕES DE AGENDAMENTO ###########\n")
+  //  escreva("  ####  1 - SELECIONE UM BANCO DE SANGUE  ####\n")
+  //  escreva("  ####  2 - DICAS PARA O DIA DA DOAÇÃO    ####\n")
+  //  escreva("  ####  3 - VOLTAR                        ####\n")
+  //  escreva("  ############################################\n")
+  //}
 
   funcao dicas(){
     letreiroPrograma()
@@ -98,16 +111,35 @@ programa {
     leia(dummy) 
   }
 
-  // declaração das variáveis globais
-  cadeia bancos[5][5]  // o "banco de dados" de bancos de sangue. Estou determinando que serão 5 vetores, cada um com 5 posições
-  inteiro proximoBanco = 0
-  inteiro codigoMenuPrincipal
-  inteiro codigoMenuInterno
-  logico impedido = falso
-  cadeia dummy // variável 'dummy', só para que o leia() provoque a parada do programa
+  funcao listaDoadores() {
+    se (proximoBanco == 0) {
+      escreva("\n-- Não há Doadores cadastrados --\n")
+    } senao {
+      escreva("\nLISTA DE DOADORES CADASTRADOS:\n")
+      para (inteiro i = 0 ; i < proximoDoador ; i++) {
+        escreva("\n############## - ", i + 1 , " - ##############")
+        escreva("\nNome: ", doadores[i][0])
+        escreva("\nCPF: ", doadores[i][1], "\n")
+      }
+    }
+    escreva("\ntecle enter para voltar ao menu")
+    leia(dummy) 
+  }
+
+  funcao carregaCadastrosIniciais() {
+    bancos[0][0] = "Hemocentro"
+    bancos[0][1] = "Av Bento Goncalvez 123"
+    bancos[0][2] = "das 8h às 17h"
+    bancos[0][3] = "51 3333-2222"
+    bancos[0][4] = "hemocentro@rs.gov.br"
+    doadores[0][0] = "José Nin Guem"
+    doadores[0][1] = "00000000191"
+  }
   
   funcao inicio() {
     
+    carregaCadastrosIniciais()
+
     menuLogin()
 
     codigoMenuPrincipal = recebeCodigo(3)
@@ -116,105 +148,125 @@ programa {
 
       escolha(codigoMenuPrincipal) {
         caso 1: // DORADOR
-
-          limpa()
-          
-          menuDoador()
-          
-          codigoMenuInterno = recebeCodigo(3)
-          
-          escolha(codigoMenuInterno){
-            caso(1): 
-
-              caracter pre_triagem[12]  //Esse questionário serve para excluir individuos que seriam exluído na entrevista de triagem clínica
-                  
-              limpa()
-              alerta()
-              escreva("\ntecle enter para iniciar o questinário")
-              leia(dummy) 
-              limpa()
-              letreiroPrograma()
-              escreva("\nUse S para sim e N para não.\n")
-              escreva("\n1- Você tem menos de 16 anos?\n")
-              leia(pre_triagem[0])
-              escreva("2- Você tem mais de 69 anos?\n")
-              leia(pre_triagem[1])
-              escreva("3- Você pesa menos de 50 kg?\n")
-              leia(pre_triagem[2])
-              escreva("4- Você fez algum procedimento cirúrgico nos últimos 6 meses?\n")
-              leia(pre_triagem[3])
-              escreva("5- Você fez tatuagem, colocou piercing ou brinco no último ano?\n")
-              leia(pre_triagem[4])
-              escreva("6- Você tem hepatite, AIDS, Doença de Chagas, malária ou HTLV?\n")
-              leia(pre_triagem[5])
-              limpa()
-              letreiroPrograma()
-              escreva("\n7- Você faz uso de drogas ilícitas injetávies?\n")
-              leia(pre_triagem[6])
-              escreva("8- Você tem problemas cardiácos?\n")
-              leia(pre_triagem[7])
-              escreva("9- Você teve diagnóstico ou suspeta de Covid-19 nos últimos 10 dias?\n")
-              leia(pre_triagem[8])
-              escreva("10- Você teve contato com pessoas com diagnóstico de Covid-19 nos últimos 7 dias?\n")
-              leia(pre_triagem[9])
-              escreva("11- Você fez alguma dessas vacinas nas últimas 48 horas (Covaxin/coronavac/Butatan) para Covid-19 ou gripe?\n")
-              leia(pre_triagem[10])
-              escreva("12- Você fez alguma dessas outras vacinas para Covid-19 nos últimos 7 dias (Astrazeneca/Oxford?fiocruz/Sputinik V/Janssen/Pfizer)?\n")
-              leia(pre_triagem[11])
-          
-              para(inteiro i = 0; i < 12; i++) {
-                se (pre_triagem[i] == 's' ou pre_triagem[i] == 'S') {
-                  impedido = verdadeiro
-                  pare
-                }
-              }
-
-              se (impedido) { 
-                escreva("\nInfelizmente, no momento, você não cumpre os requisitos para efetuar a doação.\n")
-                escreva("\nLigue para o banco de sangue e saiba mais informações.\n")
-                u.aguarde(1000)
-              } senao {
-                u.aguarde(500)
-                escreva("\nVocê será direcionado ao agendamento.\n")
-                u.aguarde(2000)
-
+          limpa()          
+          menuDoador()          
+          codigoMenuInterno = recebeCodigo(5)          
+          enquanto(codigoMenuInterno != 5) {
+            escolha(codigoMenuInterno){
+              caso(1): // QUESTINÁRIO
+                caracter pre_triagem[12]                      
                 limpa()
-                menuAgendamento()
-
-                codigoMenuInterno = recebeCodigo(3)
-
-                escolha(codigoMenuInterno){
-                  caso(1): // LISTAR BANCOS
-                    listaBancos()
-                  pare
-
-                  caso(2):
-                    limpa()
-                    dicas()
-                    u.aguarde(3500)
-                    limpa()
-                  pare
+                alerta()
+                escreva("\ntecle enter para iniciar o questinário")
+                leia(dummy) 
+                limpa()
+                letreiroPrograma()
+                escreva("\nUse S para sim e N para não.\n")
+                escreva("\n1- Você tem menos de 16 anos?\n")
+                leia(pre_triagem[0])
+                escreva("2- Você tem mais de 69 anos?\n")
+                leia(pre_triagem[1])
+                escreva("3- Você pesa menos de 50 kg?\n")
+                leia(pre_triagem[2])
+                escreva("4- Você fez algum procedimento cirúrgico nos últimos 6 meses?\n")
+                leia(pre_triagem[3])
+                escreva("5- Você fez tatuagem, colocou piercing ou brinco no último ano?\n")
+                leia(pre_triagem[4])
+                escreva("6- Você tem hepatite, AIDS, Doença de Chagas, malária ou HTLV?\n")
+                leia(pre_triagem[5])
+                limpa()
+                letreiroPrograma()
+                escreva("\n7- Você faz uso de drogas ilícitas injetávies?\n")
+                leia(pre_triagem[6])
+                escreva("8- Você tem problemas cardiácos?\n")
+                leia(pre_triagem[7])
+                escreva("9- Você teve diagnóstico ou suspeta de Covid-19 nos últimos 10 dias?\n")
+                leia(pre_triagem[8])
+                escreva("10- Você teve contato com pessoas com diagnóstico de Covid-19 nos últimos 7 dias?\n")
+                leia(pre_triagem[9])
+                escreva("11- Você fez alguma dessas vacinas nas últimas 48 horas (Covaxin/coronavac/Butatan) para Covid-19 ou gripe?\n")
+                leia(pre_triagem[10])
+                escreva("12- Você fez alguma dessas outras vacinas para Covid-19 nos últimos 7 dias (Astrazeneca/Oxford?fiocruz/Sputinik V/Janssen/Pfizer)?\n")
+                leia(pre_triagem[11])
+            
+                para(inteiro i = 0; i < 12; i++) {
+                  se (pre_triagem[i] == 's' ou pre_triagem[i] == 'S') {
+                    impedido = verdadeiro
+                    pare
+                  }
                 }
-              }
-              pare
+                respondeuQuestionario = verdadeiro
+                pare
 
-            caso (2): // ATUALIZAR CADASTRO DOADOR
-              // será implementado numa próxima versão
-            pare            
-          }
-          
+              caso (2): // AGENDAMENTO
+                limpa()
+                letreiroPrograma()
+                u.aguarde(500)
+                se (respondeuQuestionario == falso) { 
+                  escreva("\nResponda o questionário de pré-triagem para habilitar-se à doação.\n")
+                  escreva("\ntecle enter para voltar ao menu")
+                  leia(dummy)  
+                } senao se (impedido) {
+                  escreva("\nInfelizmente, no momento, você não cumpre os requisitos para efetuar a doação.\n")
+                  escreva("\nLigue para o banco de sangue e saiba mais informações.\n")
+                  escreva("\ntecle enter para voltar ao menu")
+                  leia(dummy)  
+                } senao {
+                  escreva("\nProcessando...\n")
+                  u.aguarde(1500)
+                  escreva("\nAgendamento efetuado com sucesso.\n")
+                  escreva("\ntecle enter para voltar ao menu")
+                  leia(dummy)  
+                }
+                pare
+
+              caso (3): // ATUALIZAR CADASTRO
+                limpa()
+                letreiroPrograma()
+                se (proximoDoador < 5) {  
+                  escreva("\nNome: ")
+                  leia(doadores[proximoDoador][0]) 
+                  escreva("CPF: ")
+                  leia(doadores[proximoDoador][1])                
+                  proximoDoador++  
+
+                  u.aguarde(500)  
+                  escreva("\nCadastro atualizado com sucesso!\n")
+                  u.aguarde(500)
+
+                } senao {
+                  escreva("\n!!! Sem espaço na base de dados !!!\n")
+                }
+
+                escreva("\ntecle enter para voltar ao menu")
+                leia(dummy) 
+                pare
+              
+              caso (4):
+                limpa()
+                letreiroPrograma()
+                u.aguarde(500)
+                listaBancos()
+                pare
+            }
+            limpa()
+            menuDoador()
+            codigoMenuInterno = recebeCodigo(5)
+          }          
           pare
 
         caso 2: // ADMINISTRADOR
           limpa()
           menuAdmin()
           codigoMenuInterno = recebeCodigo(4)
-          enquanto(codigoMenuInterno != 4) {  // enquanto de nível 2 dentro do caso 2 de nivel 1
-            escolha(codigoMenuInterno) {  // escolha caso de nível 2 dentro do caso 2 de nivel 1
+          enquanto(codigoMenuInterno != 4) {
+            escolha(codigoMenuInterno) {  
               caso 1:  // CADASTRAR BANCO
-                se (proximoBanco < 5) {  // verifica se as 5 posições já estão coupadas
-                  escreva("Nome do Banco de Sange: ")
-                  leia(bancos[proximoBanco][0])  // a variável proximoBanco, que começa com zero, representa o número da posição do vetor externo
+                limpa()
+                letreiroPrograma()
+                se (proximoBanco < 5) {  
+                  escreva("\nNome do Banco de Sange: ")
+                  leia(bancos[proximoBanco][0]) 
                   escreva("Endereço: ")
                   leia(bancos[proximoBanco][1])
                   escreva("Horário de atendimento: ")
@@ -223,14 +275,14 @@ programa {
                   leia(bancos[proximoBanco][3])
                   escreva("Telefone de contato: ")
                   leia(bancos[proximoBanco][4])
-                  proximoBanco++  // incremento para passar para a posição seguinte
+                  proximoBanco++  
 
-                  u.aguarde(500)  // função que gera um pequeno delay. Recebe milisegundos, ou seja, 2000 são 2 segundos
+                  u.aguarde(500)  
                   escreva("\nBanco de Sangue cadastrado com sucesso!\n")
                   u.aguarde(500)
 
                 } senao {
-                  escreva("\n!!! Sem espaço na base de dados !!!\n")  // se as 5 posições estiverem tomadas (posições de 0 a 4) e a variável proximoBanco estiver com valor 5.
+                  escreva("\n!!! Sem espaço na base de dados !!!\n")  
                 }
 
                 escreva("\ntecle enter para voltar ao menu")
@@ -238,11 +290,19 @@ programa {
 
                 pare
               caso 2: // LISTAR BANCOS
+                u.aguarde(500)
+                limpa()
+                letreiroPrograma()
+                u.aguarde(500)
                 listaBancos()
                 pare
 
               caso 3: // LISTAR DOADORES
-                // Será implementado numa próxima versão
+                u.aguarde(500)
+                limpa()
+                letreiroPrograma()
+                u.aguarde(500)
+                listaDoadores()
                 pare
 
             }
